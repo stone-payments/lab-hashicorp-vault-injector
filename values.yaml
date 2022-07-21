@@ -1,0 +1,50 @@
+server:
+  nodeSelector: |
+    stone.credit/layer: inside
+  extraLabels:
+    'app': 'vault-talks'
+  serviceAccount:
+      create: true
+      name: "vault-eks-homolog"
+
+# Run Vault in "HA" mode.
+  ha:
+    enabled: false
+    raft:
+      enabled: true    
+
+    config: |
+      
+      ui = true
+      
+      listener "tcp" {
+        tls_disable = 1
+        address = "0.0.0.0:8200"
+      }      
+
+
+injector:
+  enabled: true
+  image:
+    repository: "hashicorp/vault-k8s"
+    tag: "latest"
+  authPath: "auth/kubernetes"
+  annotations: |
+    vault.hashicorp.com/agent-inject-secret-db: internal/data/database/config
+    vault.hashicorp.com/role: 'kube-role'
+
+auditStorage:
+  enabled: true      
+
+# Vault UI
+ui:
+  enabled: true
+  serviceType: "LoadBalancer"
+  externalPort: 8200
+  annotations:
+    "external-dns.alpha.kubernetes.io/hostname": "vault-talks.homolog.stone.credit"
+    "service.beta.kubernetes.io/aws-load-balancer-backend-protocol": "http"
+    "service.beta.kubernetes.io/aws-load-balancer-internal": "true"
+    "service.beta.kubernetes.io/aws-load-balancer-ssl-cert": "arn:aws:acm:us-east-1:***REMOVED***:certificate/6a60df06-adfe-4eb5-947c-1feab39b8e75"
+    "service.beta.kubernetes.io/aws-load-balancer-ssl-ports": "443"
+    "service.beta.kubernetes.io/aws-load-balancer-target-node-labels": "stone.credit/layer=inside"
