@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: orgchart
+  namespace: vault-teste
+  labels:
+    app: orgchart
+spec:
+  selector:
+    matchLabels:
+      app: orgchart
+  replicas: 1
+  template:
+    metadata:
+      annotations:
+        vault.hashicorp.com/agent-inject: 'true'
+        vault.hashicorp.com/role: 'kube-role'
+        vault.hashicorp.com/agent-inject-secret-database-config.txt: 'internal/data/database/config'
+      labels:
+        app: orgchart
+    spec:
+      serviceAccountName: vault-eks-homolog
+      containers:
+        - name: orgchart
+          image: jweissig/app:0.0.1
