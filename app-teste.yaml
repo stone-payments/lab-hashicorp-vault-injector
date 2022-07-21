@@ -15,7 +15,7 @@ spec:
       annotations:
         vault.hashicorp.com/agent-inject: 'true'
         vault.hashicorp.com/role: 'kube-role'
-        vault.hashicorp.com/agent-inject-secret-database-config.txt: 'internal/data/database/config'
+        vault.hashicorp.com/agent-inject-secret-database-config.txt: 'database/rds/postgres/vault-hashi-talks-mock/creds/readonly'
       labels:
         app: orgchart
     spec:

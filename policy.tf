@@ -6,5 +6,8 @@ resource "vault_policy" "injector-app" {
 path "internal/data/database/config" {
   capabilities = ["read"]
 }
+path "database/rds/postgres/vault-hashi-talks-mock/*" {
+  capabilities = ["read"]
+}
 EOT
 }
