@@ -17,3 +17,14 @@ resource "vault_kubernetes_auth_backend_role" "kubernetes" {
   token_ttl                        = 3600
   token_policies                   = ["injector-app"]
 }
+
+
+
+resource "vault_kubernetes_auth_backend_role" "appruan" {
+  backend                          = vault_auth_backend.kubernetes.path
+  role_name                        = "appruan"
+  bound_service_account_names      = ["appruan"]
+  bound_service_account_namespaces = ["appruan"]
+  token_ttl                        = 3600
+  token_policies                   = ["appruan"]
+}
