@@ -3,9 +3,13 @@ server:
     stone.credit/layer: inside
   extraLabels:
     'app': 'vault-talks'
+  annotations: |
+    elastic-component-templates: stone-base
   serviceAccount:
       create: true
       name: "vault-eks-homolog"
+      annotations: |
+        "eks.amazonaws.com/role-arn": "arn:aws:iam::129817111992:role/vault-kms-unseal-eks-homolog"
 
 # Run Vault in "HA" mode.
   ha:
@@ -22,6 +26,10 @@ server:
         address = "0.0.0.0:8200"
       }      
 
+      seal "awskms" {
+        region     = "us-east-1"
+        kms_key_id = "aacc4d8c-825f-47c3-b3ba-eef7d01d8af8"
+      }
 
 injector:
   enabled: true
@@ -30,7 +38,7 @@ injector:
     tag: "latest"
   authPath: "auth/kubernetes"
   annotations: |
-    vault.hashicorp.com/agent-inject-secret-db: internal/data/database/config
+    vault.hashicorp.com/agent-inject-secret-db: database/rds/postgres
     vault.hashicorp.com/role: 'kube-role'
 
 auditStorage:
