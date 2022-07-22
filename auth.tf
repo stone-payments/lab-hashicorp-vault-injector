@@ -9,14 +9,14 @@ resource "vault_kubernetes_auth_backend_config" "example" {
 }
 
 
-resource "vault_kubernetes_auth_backend_role" "kubernetes" {
-  backend                          = vault_auth_backend.kubernetes.path
-  role_name                        = "kube-role"
-  bound_service_account_names      = ["vault-eks-homolog"]
-  bound_service_account_namespaces = ["vault-teste"]
-  token_ttl                        = 3600
-  token_policies                   = ["injector-app"]
-}
+# resource "vault_kubernetes_auth_backend_role" "kubernetes" {
+#   backend                          = vault_auth_backend.kubernetes.path
+#   role_name                        = "kube-role"
+#   bound_service_account_names      = ["vault-eks-homolog"]
+#   bound_service_account_namespaces = ["vault-teste"]
+#   token_ttl                        = 3600
+#   token_policies                   = ["injector-app"]
+# }
 
 
 
