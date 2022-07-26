@@ -1,0 +1,68 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: my-configmap
+  namespace: app-example-iam-auth
+data:
+  config.hcl: |
+    "auto_auth" = {
+      "method" "aws" {
+        "mount_path" = "auth/aws"
+        "config" = {
+          "role" = "app-example-iam-auth"
+          "type" = "iam"
+        }
+      }
+
+      "sink" = {
+        "config" = {
+          "path" = "/home/vault/.vault-token"
+        }
+
+        "type" = "file"
+      }
+    }
+
+    "exit_after_auth" = false
+    "pid_file" = "/home/vault/.pid"
+
+    "template" = {
+      "contents" = "{{ with secret \"database/rds/postgres/vault-hashi-talks-mock/creds/readonly\" -}}\n  export DATABASE_USER=\"{{ .Data.username }}\"\n{{- end }}\n{{ with secret \"database/rds/postgres/vault-hashi-talks-mock/creds/readonly\" -}}\n  export DATABASE_PASSWORD=\"{{ .Data.password }}\"\n{{- end }}"
+      "destination" = "/vault/secrets/database-config.txt"
+    }
+
+    "vault" = {
+      "address" = "http://vault.vault-hashitalks.svc:8200"
+    }
+  config-init.hcl: |
+    "auto_auth" = {
+      "method" "aws" {
+        "mount_path" = "auth/aws"
+        "config" = {
+          "role" = "app-example-iam-auth"
+          "type" = "iam"
+        }
+      }
+
+      "sink" = {
+        "config" = {
+          "path" = "/home/vault/.vault-token"
+        }
+
+        "type" = "file"
+      }
+    }
+
+    "template" = {
+      "contents" = "{{ with secret \"database/rds/postgres/vault-hashi-talks-mock/creds/readonly\" -}}\n  export DATABASE_USER=\"{{ .Data.username }}\"\n{{- end }}\n{{ with secret \"database/rds/postgres/vault-hashi-talks-mock/creds/readonly\" -}}\n  export DATABASE_PASSWORD=\"{{ .Data.password }}\"\n{{- end }}"
+      "destination" = "/vault/secrets/database-config.txt"
+    }  
+
+    "exit_after_auth" = true
+    "pid_file" = "/home/vault/.pid"
+
+    "vault" = {
+      "address" = "http://vault.vault-hashitalks.svc:8200"
+
+    }

@@ -1,6 +1,5 @@
 provider "vault" {
   address = local.VAULT_ADDR
-  
 }
 
 provider "aws" {

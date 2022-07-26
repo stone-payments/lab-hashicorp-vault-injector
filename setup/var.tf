@@ -6,5 +6,6 @@ locals {
   endpoint  = " "
   database_port = " "
   kubernetes_host = " "
+  project_name = "vault-hashitalks"
 
  }
