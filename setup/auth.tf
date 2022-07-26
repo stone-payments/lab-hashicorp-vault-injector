@@ -1,6 +1,5 @@
 resource "vault_auth_backend" "kubernetes" {
   type = "kubernetes"
-
 }
 
 resource "vault_kubernetes_auth_backend_config" "kubernetes" {
@@ -18,7 +17,6 @@ resource "vault_kubernetes_auth_backend_role" "kubernetes" {
   token_ttl                        = 3600
   token_policies                   = ["${vault_policy.kubernetes.name}"]
 }
-
 
 resource "vault_auth_backend" "approle" {
   type = "approle"
