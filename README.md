@@ -1,0 +1,1 @@
+# lab-hashicorp-vault-injector
