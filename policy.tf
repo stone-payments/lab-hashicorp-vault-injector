@@ -1,6 +1,5 @@
-
-resource "vault_policy" "injector-app" {
-  name = "injector-app"
+resource "vault_policy" "kubernetes" {
+  name = "${local.project_name}-kubernetes"
 
   policy = <<EOT
 path "internal/data/database/config" {
@@ -12,8 +11,8 @@ path "database/rds/postgres/vault-hashi-talks-mock/*" {
 EOT
 }
 
-resource "vault_policy" "appruan" {
-  name = "appruan"
+resource "vault_policy" "vault-hashitalks" {
+  name = "${local.project_name}-approle"
 
   policy = <<EOT
 path "internal/data/database/config" {

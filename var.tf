@@ -1,9 +1,10 @@
 locals {
-  VAULT_ADDR = "http://vault-talks.homolog.stone.credit:8200"
-  username_db = "***REMOVED***_username"
+  VAULT_ADDR = " "
+  username_db = " "
   password_db = ""
-  database_name = "***REMOVED***"
-  endpoint  = "vault-hashi-talks-mock-7e54ac90.cexop9zvz2f9.us-east-1.rds.amazonaws.com"
-  database_port = "5432"
+  database_name = " "
+  endpoint  = " "
+  database_port = " "
+  kubernetes_host = " "
 
  }
