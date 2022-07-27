@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: app-approle
+  name: app-approle-auth-hashiapp
   namespace: vault-hashitalks
   labels:
     app: app-approle
@@ -33,5 +33,19 @@ spec:
     spec:
       serviceAccountName: vault-hashitalks
       containers:
-        - name: orgchart
-          image: jweissig/app:0.0.1
+        - name: hashiapp
+          image: docker.io/igoritosousa22/postgrees-live:2022-07-22
+          command: ['/bin/bash']
+          args: ['-c', '. /vault/secrets/db-creds && /app/postgrees-live']
+          envFrom:
+            - configMapRef:
+                name: hashi-data
+---
+apiVersion: v1
+data:
+  DATABASE_NAME: "vault_hashi_talks_mock"
+  DATABASE_HOST: "vault-hashi-talks-mock-7e54ac90.cexop9zvz2f9.us-east-1.rds.amazonaws.com:5432"
+kind: ConfigMap
+metadata:
+  name: hashi-data
+  namespace: vault-hashitalks
