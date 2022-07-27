@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: evil-hashi-app
+  name: vida-loka-hashi-app
   namespace: vault-hashitalks
   labels:
     app: hashi-app
