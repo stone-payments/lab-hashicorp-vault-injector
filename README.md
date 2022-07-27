@@ -37,7 +37,6 @@ cd setup && terraform init && terraform apply
 
 O código terraform faz:
 
-* Deploy e unseal do Vault
 * Habilita a engine Database
 * Habilita e configura os backends de autenticação: Kubernetes, AppRole e AWS.
 * Configura as policies
