@@ -1,8 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: aws-auth-hashi-app
+  namespace: app-example-iam-auth
+  labels:
+    app: hashi-app
+spec:
+  selector:
+    matchLabels:
+      app: hashi-app
+  replicas: 1
+  template:
+    metadata:
+      annotations:
+        vault.hashicorp.com/agent-inject: 'true' # annotation que diz ao injector para realizar a mutação no pod
+        vault.hashicorp.com/agent-configmap: 'aws-auth-config'
+      labels:
+        app: hashi-app
+    spec:
+      serviceAccountName: app-example-iam-auth
+      containers:
+        - name: hashiapp
+          image: docker.io/igoritosousa22/postgrees-live:2022-07-22
+          command: ['/bin/bash']
+          args: ['-c', '. /vault/secrets/database-config && /app/postgrees-live']
+          envFrom:
+            - configMapRef:
+                name: hashi-data
+---
+apiVersion: v1
+data:
+  DATABASE_NAME: "***REMOVED***"
+  DATABASE_HOST: "***REMOVED***"
+kind: ConfigMap
+metadata:
+  name: hashi-data
+  namespace: app-example-iam-auth
 ---
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: my-configmap
+  name: aws-auth-config
   namespace: app-example-iam-auth
 data:
   config.hcl: |
@@ -29,7 +67,7 @@ data:
 
     "template" = {
       "contents" = "{{ with secret \"database/rds/postgres/vault-hashi-talks-mock/creds/readonly\" -}}\n  export DATABASE_USER=\"{{ .Data.username }}\"\n{{- end }}\n{{ with secret \"database/rds/postgres/vault-hashi-talks-mock/creds/readonly\" -}}\n  export DATABASE_PASSWORD=\"{{ .Data.password }}\"\n{{- end }}"
-      "destination" = "/vault/secrets/database-config.txt"
+      "destination" = "/vault/secrets/database-config"
     }
 
     "vault" = {
@@ -56,7 +94,7 @@ data:
 
     "template" = {
       "contents" = "{{ with secret \"database/rds/postgres/vault-hashi-talks-mock/creds/readonly\" -}}\n  export DATABASE_USER=\"{{ .Data.username }}\"\n{{- end }}\n{{ with secret \"database/rds/postgres/vault-hashi-talks-mock/creds/readonly\" -}}\n  export DATABASE_PASSWORD=\"{{ .Data.password }}\"\n{{- end }}"
-      "destination" = "/vault/secrets/database-config.txt"
+      "destination" = "/vault/secrets/database-config"
     }  
 
     "exit_after_auth" = true
