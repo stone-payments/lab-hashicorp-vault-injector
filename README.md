@@ -1,21 +1,21 @@
 # Demo - Vault Sidecar Injector + Database Secret Engine
 
 Na demonstração tecnica a seguir veremos a integração do Vault Sidecar Injector mais a utilização do Database secret engine no ecossistema do Kubernetes.
-A ideia é apresentar um flxuo de trabalho onde o injector do Vault seja capaz de renderizar secrets das engines do Vault (Database Engine e Key Value Engine).
+A ideia é apresentar um fluxo de trabalho onde o injector do Vault seja capaz de renderizar secrets das engines do Vault (Database Engine e Key Value Engine).
 
 O Vault Sidecar Injector aproveita o webhook de [admissão de mutação do kubernetes]("https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/") para interceptar e argumentar (ou alterar) definições de pod especificamente anotadas para injeções de segredos.
 
 Observação: Estamos assumindo que você esteja familizariado com operações no ecossistema do kubernetes e tenha o helm e terraform instalados também.
 
-**IMPORTANTE**: As aplicações utilizadas aqui são exclusivamente para testes e estudos. Use por sua conta em risco e de preferência num abiente controlado não produtivo.
+**IMPORTANTE**: As aplicações utilizadas aqui são exclusivamente para testes e estudos. Use por sua conta e risco e de preferência num abiente controlado não produtivo.
 
 ## Requerimentos para reprodução do ambiente:
 
 Minimamente você precisará ter:
 
 * Um Cluster Kubernetes em execução
-* Uma instancia de banco de dados acessível (Aqui estamos usando postgrees no RDS, mas pode ser qulquer Banco de dados suportado pelo Vault). [Aqui](https://bitnami.com/stack/postgresql/helm) você encontra um exemplo para deploy do postgrees dentro do ambiente K8S caso nao queira subir uma instância RDS.
-* Uma aplicação que se conecte ao banco de dados acima. Esse repositório contém uma [aplicação](./postgrees-app/) de exemplo para se conectar à um banco Postgrees.
+* Uma instancia de banco de dados acessível (Aqui estamos usando postgres no RDS, mas pode ser qualquer Banco de dados suportado pelo Vault). [Aqui](https://bitnami.com/stack/postgresql/helm) você encontra um exemplo para deploy do postgres dentro do ambiente K8S caso nao queira subir uma instância RDS.
+* Uma aplicação que se conecte ao banco de dados acima. Esse repositório contém uma [aplicação](./postgrees-app/) de exemplo para se conectar à um banco Postgres.
 
 ## Referências
 https://learn.hashicorp.com/tutorials/vault/database-secrets
@@ -47,7 +47,9 @@ O código terraform faz:
 
 ### Deploy das aplicações
 
-Para fins didáticos vamos primeiro realizar o deploy da nossa aplicação da maneira mais insegura possível: Hardcode. ``` k apply -f k8s-manifests/vida-loka-hashi-app.yaml```
+**Para fins didáticos** vamos primeiro realizar o deploy da nossa aplicação **da maneira mais insegura possível**: Hardcode. ``` k apply -f k8s-manifests/vida-loka-hashi-app.yaml```
+
+**ATENÇÃO: não usar esse modelo em produção em hipótese alguma!**
 
 ```yaml
 apiVersion: apps/v1
@@ -94,7 +96,7 @@ Esse modelo é extremamente inseguro, pois as credenciais estão expostas. Qualq
 ### Injetando credenciais de forma segura
 
 #### App Role
-O modelo abaixo utiliza o backend de autenticação do Vault App Role. Esse modelo adiciona uma camada de segurança porém ainda é ncessário criar um objeto de secret no K8S com os dados da role-id e secret-id. Essa etapa adiciona essa ação manual de criação da secret e pode ser que no longo prazo não seja tão eficiente.
+O modelo abaixo utiliza o backend de autenticação do Vault App Role. Esse modelo adiciona uma camada de segurança porém ainda é necessário criar um objeto de secret no K8S com os dados da role-id e secret-id. Essa etapa adiciona essa ação manual de criação da secret e pode ser que no longo prazo não seja tão eficiente.
 
 ![imagem](https://user-images.githubusercontent.com/73206099/181245863-5c28b804-4076-4c8d-ae99-c42b400bdee5.png)
 
@@ -155,7 +157,7 @@ metadata:
 ```
 
 #### Kubernetes Auth
-O modelo abaixo utiliza o backend de autenticação do Vault Kubernetes. Esse modelo já é mais eficiente que anterior, pois não há qualquer ação manual além de instrumentar o manifesto k8s da aplicação. Será necessário atachar ao PoD uma service account que fará o bound nas configurações de Role do Vault.  Além disso o manifesto K8S da aplicação precisará ter annotations específicas e também alguma instrução de onde e como renderizar as secrets. 
+O modelo abaixo utiliza o backend de autenticação do Vault Kubernetes. Esse modelo já é mais eficiente que o anterior, pois não há qualquer ação manual além de instrumentar o manifesto k8s da aplicação. Será necessário atachar ao PoD uma service account que fará o bound nas configurações de Role do Vault.  Além disso o manifesto K8S da aplicação precisará ter annotations específicas e também alguma instrução de onde e como renderizar as secrets. 
 
 ![imagem](https://user-images.githubusercontent.com/73206099/181245986-fc931e8b-a41f-4c97-99e9-60cd700ba57d.png)
 
@@ -213,7 +215,7 @@ metadata:
 ```
 
 #### Aws Auth
-O modelo abaixo utiliza o backend de autenticação do Vault AWS auth. Esse modelo é tão eficiente quanto ao anterior (Kubernetes auth). Uma das vantagens é a possibilidade de utilizar o IAM da aws em conjunto com o vault no processo de autenticação. Com esse método além de autenticar no Vault, a aplicação pode usar a mesma service accoount para se autenticar e acessar recursos no ecossistema da AWS via IAM Role Service Account (IRSA). Lembrando que esse modelo de autenticação é específico para AWS e só irá funcionar para escopos que se utilizem do serviço de compute da AWS (EC2) como o EKS. 
+O modelo abaixo utiliza o backend de autenticação do Vault AWS auth. Esse modelo é tão eficiente quanto o anterior (Kubernetes auth). Uma das vantagens é a possibilidade de utilizar o IAM da aws em conjunto com o vault no processo de autenticação. Com esse método além de autenticar no Vault, a aplicação pode usar a mesma service accoount para se autenticar e acessar recursos no ecossistema da AWS via IAM Role Service Account (IRSA). Lembrando que esse modelo de autenticação é específico para AWS e só irá funcionar para escopos que se utilizem do serviço de compute da AWS (EC2) como o EKS. 
 
 ![imagem](https://user-images.githubusercontent.com/73206099/181246091-eceb0a9c-e152-4edc-ac4a-30d96250f2f0.png)
 
