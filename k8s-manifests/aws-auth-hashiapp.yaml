@@ -30,8 +30,8 @@ spec:
 ---
 apiVersion: v1
 data:
-  DATABASE_NAME: "***REMOVED***"
-  DATABASE_HOST: "***REMOVED***"
+  DATABASE_NAME: "app_db"
+  DATABASE_HOST: "mydatabase.local:5432"
 kind: ConfigMap
 metadata:
   name: hashi-data
@@ -95,7 +95,7 @@ data:
     "template" = {
       "contents" = "{{ with secret \"database/rds/postgres/vault-hashi-talks-mock/creds/readonly\" -}}\n  export DATABASE_USER=\"{{ .Data.username }}\"\n{{- end }}\n{{ with secret \"database/rds/postgres/vault-hashi-talks-mock/creds/readonly\" -}}\n  export DATABASE_PASSWORD=\"{{ .Data.password }}\"\n{{- end }}"
       "destination" = "/vault/secrets/database-config"
-    }  
+    }
 
     "exit_after_auth" = true
     "pid_file" = "/home/vault/.pid"
