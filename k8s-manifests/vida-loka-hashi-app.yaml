@@ -29,8 +29,8 @@ apiVersion: v1
 data:
   DATABASE_PASSWORD: "StrongPassword@2022"
   DATABASE_USER: "administrador-manual"
-  DATABASE_NAME: "vault_hashi_talks_mock"
-  DATABASE_HOST: "vault-hashi-talks-mock-7e54ac90.cexop9zvz2f9.us-east-1.rds.amazonaws.com:5432"
+  DATABASE_NAME: "app_db"
+  DATABASE_HOST: "mydatabase.local:5432"
 kind: ConfigMap
 metadata:
   name: hashi-data
