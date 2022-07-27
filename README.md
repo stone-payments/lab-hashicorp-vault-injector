@@ -18,11 +18,11 @@ Minimamente você precisará ter:
 * Uma aplicação que se conecte ao banco de dados acima. Esse repositório contém uma [aplicação](./postgrees-app/) de exemplo para se conectar à um banco Postgres.
 
 ## Referências
-https://learn.hashicorp.com/tutorials/vault/database-secrets
-https://learn.hashicorp.com/tutorials/vault/kubernetes-sidecar
-https://github.com/jweissig/vault-k8s-sidecar-demo
-https://www.vaultproject.io/docs/platform/k8s/injector/annotations
-https://docs.aws.amazon.com/emr/latest/EMR-on-EKS-DevelopmentGuide/setting-up-enable-IAM.html
+* https://learn.hashicorp.com/tutorials/vault/database-secrets
+* https://learn.hashicorp.com/tutorials/vault/kubernetes-sidecar
+* https://github.com/jweissig/vault-k8s-sidecar-demo
+* https://www.vaultproject.io/docs/platform/k8s/injector/annotations
+* https://docs.aws.amazon.com/emr/latest/EMR-on-EKS-DevelopmentGuide/setting-up-enable-IAM.html
 
 ###  Clonar repositório
 ```bash
