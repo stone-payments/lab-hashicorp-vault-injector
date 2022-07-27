@@ -6,7 +6,7 @@ resource "aws_iam_role" "iam_assumable_role_with_web_identity" {
         {
             "Effect": "Allow",
             "Principal": {
-                "Federated": "arn:aws:iam::129817111992:oidc-provider/oidc.eks.us-east-1.amazonaws.com/id/[ID AQUI]"
+                "Federated": "arn:aws:iam::[ACCOUNT ID AQUI]:oidc-provider/oidc.eks.us-east-1.amazonaws.com/id/[ID AQUI]"
             },
             "Action": "sts:AssumeRoleWithWebIdentity",
             "Condition": {
