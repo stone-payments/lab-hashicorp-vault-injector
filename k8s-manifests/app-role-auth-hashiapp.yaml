@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app-approle-auth-hashiapp
+  namespace: vault-hashitalks
+  labels:
+    app: app-approle
+spec:
+  selector:
+    matchLabels:
+      app: app-approle
+  replicas: 1
+  template:
+    metadata:
+      annotations:
+        vault.hashicorp.com/agent-inject: 'true'
+        vault.hashicorp.com/role: 'vault-hashitalks-approle'
+        vault.hashicorp.com/agent-extra-secret: 'approle'
+        vault.hashicorp.com/auth-type: 'approle'
+        vault.hashicorp.com/auth-path: 'auth/approle'
+        vault.hashicorp.com/auth-config-role-id-file-path: '/vault/custom/role-id'
+        vault.hashicorp.com/auth-config-secret-id-file-path: '/vault/custom/secret-id'
+        vault.hashicorp.com/agent-inject-secret-db-creds: 'database/rds/postgres/vault-hashi-talks-mock/creds/readonly'
+        vault.hashicorp.com/agent-inject-template-db-creds: |
+          {{ with secret "database/rds/postgres/vault-hashi-talks-mock/creds/readwrite" -}}
+            export DATABASE_USER="{{ .Data.username }}"
+          {{- end }}
+          {{ with secret "database/rds/postgres/vault-hashi-talks-mock/creds/readwrite" -}}
+            export DATABASE_PASSWORD="{{ .Data.password }}"
+          {{- end }}
+      labels:
+        app: app-approle
+    spec:
+      serviceAccountName: vault-hashitalks
+      containers:
+        - name: hashiapp
+          image: <sua_docker_image>:<tag>
+          command: ['/bin/bash']
+          args: ['-c', '. /vault/secrets/db-creds && /app/postgrees-live']
+          envFrom:
+            - configMapRef:
+                name: hashi-data
+---
+apiVersion: v1
+data:
+  DATABASE_NAME: "app_db"
+  DATABASE_HOST: "mydatabase.local:5432"
+kind: ConfigMap
+metadata:
+  name: hashi-data
+  namespace: vault-hashitalks

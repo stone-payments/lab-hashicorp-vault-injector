@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: k8s-auth-hashi-app
+  namespace: vault-hashitalks
+  labels:
+    app: hashi-app
+spec:
+  selector:
+    matchLabels:
+      app: hashi-app
+  replicas: 1
+  template:
+    metadata:
+      annotations:
+        vault.hashicorp.com/agent-inject: 'true' # annotation que diz ao injector para realizar a mutação no pod
+        vault.hashicorp.com/agent-inject-secret-database-config: 'database/rds/postgres/vault-hashi-talks-mock/creds/readonly' # path da secret engined database
+        vault.hashicorp.com/agent-inject-template-database-config: |
+          {{ with secret "database/rds/postgres/vault-hashi-talks-mock/creds/readonly" -}}
+            export DATABASE_USER="{{ .Data.username }}"
+          {{- end }}
+          {{ with secret "database/rds/postgres/vault-hashi-talks-mock/creds/readonly" -}}
+            export DATABASE_PASSWORD="{{ .Data.password }}"
+          {{- end }}
+        vault.hashicorp.com/role: 'vault-hashitalks-role' # role que possui a policy de acesso
+      labels:
+        app: hashi-app
+    spec:
+      serviceAccountName: vault-hashitalks
+      containers:
+        - name: hashiapp
+          image: <sua_docker_image>:<tag>
+          command: ['/bin/bash']
+          args: ['-c', '. /vault/secrets/database-config && /app/postgrees-live']
+          envFrom:
+            - configMapRef:
+                name: hashi-data
+---
+apiVersion: v1
+data:
+  DATABASE_NAME: "app_db"
+  DATABASE_HOST: "mydatabase.local:5432"
+kind: ConfigMap
+metadata:
+  name: hashi-data
+  namespace: vault-hashitalks

@@ -1,0 +1,31 @@
+server:
+  extraLabels:
+    'app': 'vault-hashitalks'
+  serviceAccount:
+      create: true
+      name: "vault-hashitalks"
+  ha:
+    enabled: false
+    raft:
+      enabled: true    
+
+    config: |
+      
+      ui = true
+      
+      listener "tcp" {
+        tls_disable = 1
+        address = "0.0.0.0:8200"
+      }      
+injector:
+  enabled: true
+  image:
+    repository: "hashicorp/vault-k8s"
+    tag: "latest"
+auditStorage:
+  enabled: true      
+
+ui:
+  enabled: true
+  serviceType: "LoadBalancer"
+  externalPort: 8200
